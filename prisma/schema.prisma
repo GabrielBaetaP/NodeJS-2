@@ -14,13 +14,14 @@ datasource db {
 
 }
 
+// ... (generator e datasource)
+
 model Usuario {
   id          String    @id @default(uuid())
   nome        String
   email       String    @unique
   senha       String
-  foto        String
-  
+  foto        String?
   posts       Post[]
   comentarios Comentario[]
   likes       Like[]
@@ -29,48 +30,40 @@ model Usuario {
 }
 
 model Post {
-  id          String     @id @default(uuid())
-  titulo      String
-  conteudo    String
-  created_at  DateTime   @default(now())
-
-  usuarioId   String
-  usuario     Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
+  id        String     @id @default(uuid())
+  titulo    String
+  conteudo  String
+  createdAt DateTime   @default(now()) @map("created_at") // Mapeado
+  usuarioId String     @map("usuario_id") // Mapeado
+  usuario   Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   comentarios Comentario[]
-  likes       Like[]
+  likes      Like[]
 
   @@map("posts")
 }
 
 model Comentario {
-  id         String   @id @default(uuid())
-  conteudo   String
-  created_at DateTime @default(now())
-
-  usuarioId  String
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  postId     String
-  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  likes      Like[]
+  id        String   @id @default(uuid())
+  conteudo  String
+  createdAt DateTime @default(now()) @map("created_at") // Mapeado
+  usuarioId String   @map("usuario_id") // Mapeado
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  postId    String   @map("post_id") // Mapeado
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes     Like[]
 
   @@map("comentarios")
 }
 
 model Like {
-  id          String      @id @default(uuid())
-  created_at  DateTime    @default(now())
-
-  usuarioId   String
-  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  postId      String?
-  post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  
-  comentarioId String?
-  comentario  Comentario? @relation(fields: [comentarioId], references: [id], onDelete: Cascade)
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now()) @map("created_at") // Mapeado
+  usuarioId    String      @map("usuario_id") // Mapeado
+  usuario      Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  postId       String?     @map("post_id") // Mapeado
+  post         Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comentarioId String?     @map("comentario_id") // Mapeado
+  comentario   Comentario? @relation(fields: [comentarioId], references: [id], onDelete: Cascade)
 
   @@map("likes")
 }
