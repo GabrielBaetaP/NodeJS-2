@@ -6,10 +6,71 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+
+}
+
+model Usuario {
+  id          String    @id @default(uuid())
+  nome        String
+  email       String    @unique
+  senha       String
+  foto        String
+  
+  posts       Post[]
+  comentarios Comentario[]
+  likes       Like[]
+
+  @@map("usuarios")
+}
+
+model Post {
+  id          String     @id @default(uuid())
+  titulo      String
+  conteudo    String
+  created_at  DateTime   @default(now())
+
+  usuarioId   String
+  usuario     Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  comentarios Comentario[]
+  likes       Like[]
+
+  @@map("posts")
+}
+
+model Comentario {
+  id         String   @id @default(uuid())
+  conteudo   String
+  created_at DateTime @default(now())
+
+  usuarioId  String
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  postId     String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  likes      Like[]
+
+  @@map("comentarios")
+}
+
+model Like {
+  id          String      @id @default(uuid())
+  created_at  DateTime    @default(now())
+
+  usuarioId   String
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  postId      String?
+  post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  comentarioId String?
+  comentario  Comentario? @relation(fields: [comentarioId], references: [id], onDelete: Cascade)
+
+  @@map("likes")
 }
