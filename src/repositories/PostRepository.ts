@@ -1,8 +1,8 @@
 import { Post, Prisma } from '@prisma/client';
 
 export interface PostUpdateInput {
-  titulo?: string;
-  conteudo?: string;
+  title?: string,
+  content?: string,
 }
 
 export interface PostsRepository {
